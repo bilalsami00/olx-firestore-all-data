@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
 import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-auth.js";
-import { getFirestore, setDoc, doc, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js'
+import { getFirestore,query, setDoc, doc, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -89,12 +89,23 @@ function postAdToDb(adTitle,price,description){
   return addDoc(collection(db, 'ads'), {adTitle,price,description,userId })
 }
 
+
 async function getAd(){
   
-    const querySnapshot = await getDocs(collection(db, "ads"));
-    querySnapshot.forEach((doc) => {
+  const q = query(collection(db, "ads"))
+  const querySnapshot = await getDocs(q);
+  let arr = []
+  querySnapshot.forEach(doc => {
+    
+    arr.push(doc.data())
+
+   getData(arr)
     // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
+    // console.log(doc.id, " => ", doc.data());
+
+    console.log(data);
+    return data
+  
   });
   
 }
@@ -104,5 +115,6 @@ export {
     signInUser,
     postAdToDb,
     getAd
+
 }
 

@@ -1,5 +1,5 @@
 import {signUpNewUser, signInUser, postAdToDb, getAd} from './config/firebase.js';
-
+ 
 window.signUp = async function (){
   
     //this is for firebase auth
@@ -57,13 +57,20 @@ window.postAd = async function(){
   }
 }
 
+
 window.showAd = async function(){
   try{
     await getAd()
+    const addds = document.getElementsByClassName('container')
+    addds.innerHTML(data)
   }
   catch(e){
     console.log('errorr-->', e.message)
   }
+}
+
+window.getData = async function(){
+ 
 }
 
 /*
