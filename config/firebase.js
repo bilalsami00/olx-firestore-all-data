@@ -2,8 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
 import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-auth.js";
 import { getFirestore,query, setDoc, doc, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getStorage, ref, uploadBytes,getDownloadURL } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-storage.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,6 +20,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app)
 // for firestore \|/ from https://firebase.google.com/docs/firestore/quickstart
 const db = getFirestore(app)
+
+const storage = getStorage(app)
 
 async function signUpNewUser(userInfo){
 
@@ -84,37 +85,45 @@ function addUserToDb(userInfo,uid) {
       
 }
 
-function postAdToDb(adTitle,price,description){
+// to upload image 
+
+async function uploadImage(image){
+  const storageRef = ref (storage, `image/${image.name}`)
+} 
+
+function postAdToDb(adTitle,price,description,imageUrl){
   const userId = auth.currentUser.uid
-  return addDoc(collection(db, 'ads'), {adTitle,price,description,userId })
+  return addDoc(collection(db, 'ads'), {adTitle,price,description,userId,imageUrl})
 }
 
+async function uploadImage(){
+  const storageRef = ref(storage, `images/${image.name}`)
+  const snapshot = await uploadBytes(storageRef, image)
+  const url = await getDownloadURL(snapshot.ref)
+  return url;
+}
 
-async function getAd(){
+async function getAdFromDb(){
   
   const q = query(collection(db, "ads"))
   const querySnapshot = await getDocs(q);
-  let arr = []
+  const ads=[]
   querySnapshot.forEach(doc => {
     
-    arr.push(doc.data())
-
-   getData(arr)
-    // doc.data() is never undefined for query doc snapshots
-    // console.log(doc.id, " => ", doc.data());
-
-    console.log(data);
+    arr.push({id:doc.id, ...doc.data()})
     return data
   
   });
   
 }
 
+
 export {
     signUpNewUser,
     signInUser,
     postAdToDb,
-    getAd
+    getAdFromDb,
+    uploadImage
 
 }
 

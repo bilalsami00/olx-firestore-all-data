@@ -1,4 +1,4 @@
-import {signUpNewUser, signInUser, postAdToDb, getAd} from './config/firebase.js';
+import {signUpNewUser, signInUser, postAdToDb, getAd, uploadImage} from './config/firebase.js';
  
 window.signUp = async function (){
   
@@ -13,7 +13,7 @@ window.signUp = async function (){
 
     var signupbtn = document.getElementById('signupbtn')
 
-    signUpNewUser({email, password, fullname, age }); // these curly braces cuz object IF we are passing two or more values to a function
+    // signUpNewUser({email, password, fullname, age }); // these curly braces cuz object IF we are passing two or more values to a function
     try{
         await signUpNewUser({email, password,fullname, age})
         signupbtn.setAttribute('data-bs-dismiss',"modal")
@@ -46,11 +46,12 @@ window.postAd = async function(){
   const adTitle = document.getElementById("ad-title").value
   const description = document.getElementById("description").value
   const price = document.getElementById("price").value
-  // const form = document.getElementById("form").value
+  const image = document.getElementById('images').file[0]
 
   try{
+      const imageUrl = await uploadImage(image)
       await postAdToDb(adTitle,description,price)
-      alert('ad posted')
+      alert('ad posted succy')
   }
   catch(e){
     console.log('e-->', e.message)
@@ -69,8 +70,18 @@ window.showAd = async function(){
   }
 }
 
-window.getData = async function(){
- 
+window.someting = async function getAds(){
+  const ads = await getAdFromDb()
+  const adsElem = document.getElementById('ads')
+
+  for(let item of ads){
+    adsElem.innerHTML+= `<div onclick = 'goToDetail('${item.id}')' style = 'border': 1px solid gray;
+    margin: 5px; display: inline-block; width:120px;'>
+    <img src= ${item.imageUrl} width = '120'/>
+    <h2>${item.titile}</h2>
+    <h3>${itme.price}</h3>
+    </div>`
+  }
 }
 
 /*
